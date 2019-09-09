@@ -9,7 +9,10 @@ async def get_kingdoms(request):
 
 
 async def get_categories(request):
-    list_of_categories = await database.select_categories(3)
+    if request.body_exists:
+        kingdom_id = await request.json()
+        
+    list_of_categories = await database.select_categories(kingdom_id["kingdom_id"])
     return web.json_response(list_of_categories)
 
 
