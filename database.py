@@ -8,8 +8,8 @@ from orm_tables import categories, kingdoms, products
 
 class Database():
     def __init__(self, user, database, host, password):
-        self._loop = asyncio.get_event_loop()
-        self._conn = self._loop.run_until_complete(self._create_connection(user, 
+        loop = asyncio.get_event_loop()
+        self._conn = loop.run_until_complete(self._create_connection(user, 
                                                                      database, 
                                                                      host, 
                                                                      password))
@@ -25,9 +25,24 @@ class Database():
 
     async def select_kingdoms(self):
         list_of_kingdoms = list()
-
         query = sa.select([kingdoms])
-        async for row in self._conn.execute(query):
-            list_of_kingdoms.append({"kingdom_id": row.kingdom_id, "name": row.name})
 
+        async for row in self._conn.execute(query):
+            category = dict()
+            for col in row:
+                category[col] = row[col]
+            list_of_kingdoms.append(category)
+            
         return list_of_kingdoms
+
+    async def select_categories(self, kingdom_id):
+        list_of_categories = list()
+        query = sa.select([categories]).where(categories.c.kingdom_id == kingdom_id)
+
+        async for row in self._conn.execute(query):
+            category = dict()
+            for col in row:
+                category[col] = row[col]
+            list_of_categories.append(category)
+
+        return list_of_categories
