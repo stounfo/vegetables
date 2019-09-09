@@ -1,7 +1,9 @@
 import asyncio
-from orm_tables import kingdoms, products, categories
+
 import sqlalchemy as sa
 from aiopg.sa import create_engine
+
+from orm_tables import categories, kingdoms, products
 
 
 class Database():
