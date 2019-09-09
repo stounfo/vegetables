@@ -46,3 +46,15 @@ class Database():
             list_of_categories.append(category)
 
         return list_of_categories
+
+    async def select_products(self, category_id):
+        list_of_products = list()
+        query = sa.select([products]).where(products.c.category_id == category_id)
+
+        async for row in self._conn.execute(query):
+            product = dict()
+            for col in row:
+                product[col] = row[col]
+            list_of_products.append(product)
+
+        return list_of_products
