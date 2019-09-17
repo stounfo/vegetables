@@ -3,7 +3,8 @@ import asyncio
 import sqlalchemy as sa
 from aiopg.sa import create_engine
 
-from orm_tables import subcategories, categories, products
+from orm_tables import (carts, carts_items, categories, products,
+                        subcategories, users)
 
 
 class Database():

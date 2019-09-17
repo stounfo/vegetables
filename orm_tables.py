@@ -17,3 +17,24 @@ products = sa.Table("products", sa.MetaData(),
                     sa.Column("cost", sa.Integer),
                     sa.Column("subcategory_id", sa.Integer),
                     sa.Column("photo", sa.String))
+
+
+users = sa.Table("users", sa.MetaData(),
+                    sa.Column("user_id", sa.Integer, primary_key=True),
+                    sa.Column("name", sa.String),
+                    sa.Column("surname", sa.String),
+                    sa.Column("phone", sa.String),
+                    sa.Column("tms_create", sa.DateTime))
+
+
+carts = sa.Table("carts", sa.MetaData(),
+                    sa.Column("cart_id", sa.Integer, primary_key=True),
+                    sa.Column("user_id", sa.Integer),
+                    sa.Column("tms_create", sa.DateTime))
+
+
+carts_items = sa.Table("carts_items", sa.MetaData(),
+                    sa.Column("cart_item_id", sa.Integer, primary_key=True),
+                    sa.Column("quantity", sa.Integer),
+                    sa.Column("cart_id", sa.Integer),
+                    sa.Column("product_id", sa.Integer))
