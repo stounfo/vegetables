@@ -5,23 +5,23 @@ import json
 routes = web.RouteTableDef()
 
 
-@routes.get('/get_kingdoms')
-async def get_kingdoms(request):
-    kingdoms = await database.select_kingdoms()
-    return web.json_response(kingdoms)
-
-
-@routes.post('/get_categories')
+@routes.get('/get_categories')
 async def get_categories(request):
-    kingdom_id = await request.json()
-    categories = await database.select_categories(kingdom_id["kingdom_id"])
+    categories = await database.select_categories()
     return web.json_response(categories)
+
+
+@routes.post('/get_subcategories')
+async def get_subcategories(request):
+    category_id = await request.json()
+    subcategories = await database.select_subcategories(category_id["category_id"])
+    return web.json_response(subcategories)
 
 
 @routes.post('/get_products')
 async def get_products(request):
-    category_id = await request.json()    
-    products = await database.select_products(category_id["category_id"])
+    subcategory_id = await request.json()    
+    products = await database.select_products(subcategory_id["subcategory_id"])
     return web.json_response(products)
 
 

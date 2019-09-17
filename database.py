@@ -3,7 +3,7 @@ import asyncio
 import sqlalchemy as sa
 from aiopg.sa import create_engine
 
-from orm_tables import categories, kingdoms, products
+from orm_tables import subcategories, categories, products
 
 
 class Database():
@@ -23,33 +23,33 @@ class Database():
         )
         return await engine.acquire()
 
-    async def select_kingdoms(self):
-        list_of_kingdoms = list()
-        query = sa.select([kingdoms])
-
-        async for row in self._conn.execute(query):
-            category = dict()
-            for col in row:
-                category[col] = row[col]
-            list_of_kingdoms.append(category)
-            
-        return list_of_kingdoms
-
-    async def select_categories(self, kingdom_id):
+    async def select_categories(self):
         list_of_categories = list()
-        query = sa.select([categories]).where(categories.c.kingdom_id == kingdom_id)
+        query = sa.select([categories])
 
         async for row in self._conn.execute(query):
-            category = dict()
+            subcategory = dict()
             for col in row:
-                category[col] = row[col]
-            list_of_categories.append(category)
-
+                subcategory[col] = row[col]
+            list_of_categories.append(subcategory)
+            
         return list_of_categories
 
-    async def select_products(self, category_id):
+    async def select_subcategories(self, category_id):
+        list_of_subcategories = list()
+        query = sa.select([subcategories]).where(subcategories.c.category_id == category_id)
+
+        async for row in self._conn.execute(query):
+            subcategory = dict()
+            for col in row:
+                subcategory[col] = row[col]
+            list_of_subcategories.append(subcategory)
+
+        return list_of_subcategories
+
+    async def select_products(self, subcategory_id):
         list_of_products = list()
-        query = sa.select([products]).where(products.c.category_id == category_id)
+        query = sa.select([products]).where(products.c.subcategory_id == subcategory_id)
 
         async for row in self._conn.execute(query):
             product = dict()
