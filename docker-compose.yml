@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  vegetables-pg:
+    container_name: vegetables-pg
+    image: postgres:11
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: vegetables
+      POSTGRES_PASSWORD: vegetables
+    ports:
+      - 5432:5432
+    volumes: 
+      # - "db-data:/var/lib/postgresql/data"
+      - "./deploy.sql:/docker-entrypoint-initdb.d/1-deploy.sql:ro"
+      - "./fill_tables.sql:/docker-entrypoint-initdb.d/2-deploy.sql:ro"
+  vegetables:
+    container_name: vegetables
+    build: ./
+    restart: unless-stopped
+    command: python main.py
+    ports:
+      - 8080:8080
+    depends_on:
+      - vegetables-pg

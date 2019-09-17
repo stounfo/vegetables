@@ -13,29 +13,24 @@ async def get_kingdoms(request):
 
 @routes.post('/get_categories')
 async def get_categories(request):
-    if request.body_exists:
-        kingdom_id = await request.json()
-        
+    kingdom_id = await request.json()
     categories = await database.select_categories(kingdom_id["kingdom_id"])
     return web.json_response(categories)
 
 
 @routes.post('/get_products')
 async def get_products(request):
-    if request.body_exists:
-        category_id = await request.json()
-    
+    category_id = await request.json()    
     products = await database.select_products(category_id["category_id"])
     return web.json_response(products)
 
 
 
 if __name__ == "__main__":
-    database = Database(user="postgres",
+    database = Database(user="vegetables",
                         database="vegetables",
-                        host="localhost",
-                        password="123")
+                        host="vegetables-pg",
+                        password="vegetables")
     app = web.Application()
     app.add_routes(routes)
-
-    web.run_app(app, host="0.0.0.0", port=8082)
+    web.run_app(app, host="0.0.0.0", port=8080)
