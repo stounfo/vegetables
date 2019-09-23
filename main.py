@@ -1,4 +1,5 @@
 from aiohttp import web
+import aiohttp_cors
 from database import Database
 import json
 
@@ -27,10 +28,20 @@ async def get_products(request):
 
 
 if __name__ == "__main__":
+    # Add conn to db
     database = Database(user="vegetables",
                         database="vegetables",
-                        host="vegetables-pg",
+                        host="localhost",
                         password="vegetables")
     app = web.Application()
     app.add_routes(routes)
+
+    # Add CORS for all routes
+    cors = aiohttp_cors.setup(app, defaults={
+        "*": aiohttp_cors.ResourceOptions(expose_headers="*", allow_headers="*")
+    })
+    for route in list(app.router.routes()):
+        cors.add(route)
+
+    # Run server
     web.run_app(app, host="0.0.0.0", port=8080)
