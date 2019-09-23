@@ -37,8 +37,8 @@ CREATE INDEX IF NOT EXISTS idx_subcategory_id_products ON products (subcategory_
 CREATE TABLE IF NOT EXISTS users(
     user_id serial PRIMARY KEY,
     name text,
-    surname text,
     phone text,
+    address text,
     tms_create timestamp without time zone
 );
 

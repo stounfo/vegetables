@@ -22,8 +22,8 @@ products = sa.Table("products", sa.MetaData(),
 users = sa.Table("users", sa.MetaData(),
                     sa.Column("user_id", sa.Integer, primary_key=True),
                     sa.Column("name", sa.String),
-                    sa.Column("surname", sa.String),
                     sa.Column("phone", sa.String),
+                    sa.Column("address", sa.String),
                     sa.Column("tms_create", sa.DateTime))
 
 
