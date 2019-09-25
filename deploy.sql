@@ -35,14 +35,18 @@ CREATE INDEX IF NOT EXISTS idx_subcategory_id_products ON products (subcategory_
 
 
 CREATE TABLE IF NOT EXISTS users(
-    user_id serial PRIMARY KEY,
+    id serial PRIMARY KEY,
+    user_id text,
+    client_type text,
     name text,
     phone text,
     address text,
     tms_create timestamp without time zone
 );
 
-CREATE INDEX IF NOT EXISTS idx_user_id ON users (user_id);
+CREATE INDEX IF NOT EXISTS idx_id_users ON users (id);
+CREATE INDEX IF NOT EXISTS idx_user_id_users ON users (user_id);
+CREATE INDEX IF NOT EXISTS idx_client_type_users ON users (client_type);
 
 
 CREATE TABLE IF NOT EXISTS carts(
@@ -50,7 +54,7 @@ CREATE TABLE IF NOT EXISTS carts(
     user_id integer UNIQUE,
     tms_create timestamp without time zone,
     CONSTRAINT user_id FOREIGN KEY (user_id)
-        REFERENCES users (user_id) MATCH SIMPLE
+        REFERENCES users (id) MATCH SIMPLE
 );
 
 CREATE INDEX IF NOT EXISTS idx_cart_id ON carts (cart_id);

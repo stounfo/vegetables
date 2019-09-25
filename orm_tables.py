@@ -20,7 +20,9 @@ products = sa.Table("products", sa.MetaData(),
 
 
 users = sa.Table("users", sa.MetaData(),
-                    sa.Column("user_id", sa.Integer, primary_key=True),
+                    sa.Column("id", sa.Integer, primary_key=True),
+                    sa.Column("user_id", sa.String),
+                    sa.Column("client_type", sa.String),
                     sa.Column("name", sa.String),
                     sa.Column("phone", sa.String),
                     sa.Column("address", sa.String),
