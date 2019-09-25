@@ -41,7 +41,8 @@ CREATE TABLE IF NOT EXISTS users(
     name text,
     phone text,
     address text,
-    tms_create timestamp without time zone
+    tms_create timestamp without time zone,
+    UNIQUE (user_code, client_type)
 );
 
 CREATE INDEX IF NOT EXISTS idx_user_id_users ON users (user_id);
