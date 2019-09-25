@@ -29,7 +29,7 @@ async def get_products(request):
 @routes.post('/get_cart_id')
 async def get_cart_id(request):
     request_data = await request.json()
-    user_code = request_data["user_code"]
+    user_code = str(request_data["user_code"])
     client_type = request_data["client_type"]
 
     user_id = await database.get_user_id(user_code, client_type)
@@ -41,6 +41,30 @@ async def get_cart_id(request):
         user_id = await database.insert_into_users(user_code, client_type)
         cart_id = await database.insert_into_carts(user_id)
         return web.json_response({"cart_id": cart_id})
+
+
+@routes.post('/add_item_to_cart')
+async def add_item_to_cart(request):
+    request_data = await request.json()
+
+    cart_id = request_data["cart_id"]
+    product_id = request_data["product_id"]
+    quantity = int(request_data["quantity"])
+
+    print(cart_id, product_id, quantity)
+
+    cart_item_id = await database.get_cart_item_id(cart_id=cart_id,
+                                                   product_id=product_id)
+
+    if cart_item_id:
+        await database.update_cart_item(cart_item_id=cart_item_id,
+                                        quantity=quantity)
+        return web.Response(text="success")
+    else:
+        await database.insert_into_carts_items(cart_id=cart_id,
+                                               product_id=product_id,
+                                               quantity=quantity)
+        return web.Response(text="success")
 
 
 

@@ -107,3 +107,37 @@ class Database():
             cart_id = row[0]
         
         return cart_id
+
+    async def get_cart_item_id(self, cart_id, product_id):
+        cart_item_id = False
+        query = sa.select([carts_items.c.cart_item_id]).where(
+                    (carts_items.c.cart_id == cart_id) &
+                    (carts_items.c.product_id == product_id)
+                )
+        
+        async for row in self._conn.execute(query):
+            cart_item_id = row.cart_item_id
+        
+        return cart_item_id
+
+    async def update_cart_item(self, cart_item_id, quantity):
+        await self._conn.execute(carts_items.update().values(
+                    quantity=quantity).where(
+                        carts_items.c.cart_item_id == cart_item_id
+                    ))
+
+    async def insert_into_carts_items(self, cart_id, product_id, quantity):
+        await self._conn.execute(carts_items.insert().values(quantity=quantity,
+                                                             product_id=product_id,
+                                                             cart_id=cart_id))
+
+
+
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    database = Database(user="vegetables",
+                        database="vegetables",
+                        host="localhost",
+                        password="vegetables")
+
+    print(loop.run_until_complete( database.get_cart_item_id(1, 1) ))
