@@ -26,6 +26,23 @@ async def get_products(request):
     return web.json_response(products)
 
 
+@routes.post('/get_cart_id')
+async def get_cart_id(request):
+    request_data = await request.json()
+    user_code = request_data["user_code"]
+    client_type = request_data["client_type"]
+
+    user_id = await database.get_user_id(user_code, client_type)
+
+    if user_id:
+        cart_id = await database.get_cart_id(user_id)
+        return web.json_response({"cart_id": cart_id})
+    else:
+        user_id = await database.insert_into_users(user_code, client_type)
+        cart_id = await database.insert_into_carts(user_id)
+        return web.json_response({"cart_id": cart_id})
+
+
 
 if __name__ == "__main__":
     # Add conn to db

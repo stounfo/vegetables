@@ -5,6 +5,7 @@ from aiopg.sa import create_engine
 
 from orm_tables import (carts, carts_items, categories, products,
                         subcategories, users)
+from utils import datetime_now
 
 
 class Database():
@@ -59,3 +60,50 @@ class Database():
             list_of_products.append(product)
 
         return list_of_products
+
+    async def get_user_id(self, user_code, client_type):
+        user_id = False
+        query = sa.select([users.c.user_id]).where(
+                            (users.c.user_code == user_code) &
+                            (users.c.client_type == client_type)                   
+                        )
+
+        async for row in self._conn.execute(query):
+            user_id = row.user_id
+        
+        return user_id
+
+    async def get_cart_id(self, user_id):
+        cart_id = None
+        query = sa.select([carts.c.cart_id]).where(carts.c.user_id == user_id)
+
+        async for row in self._conn.execute(query):
+            cart_id = row.cart_id
+        
+        return cart_id
+
+    async def insert_into_users(self, user_code, client_type):
+        result = await self._conn.execute(users.insert().values(
+                user_code=user_code,
+                client_type=client_type,
+                name=None,
+                phone=None,
+                address=None,
+                tms_create=datetime_now(),
+        ))
+
+        async for row in result:
+            user_id = row[0]
+        
+        return user_id
+
+    async def insert_into_carts(self, user_id):
+        result = await self._conn.execute(carts.insert().values(
+                user_id = user_id,
+                tms_create=datetime_now(),
+        ))
+
+        async for row in result:
+            cart_id = row[0]
+        
+        return cart_id
