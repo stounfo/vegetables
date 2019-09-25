@@ -65,8 +65,9 @@ CREATE INDEX IF NOT EXISTS idx_user_id_carts ON carts (user_id);
 CREATE TABLE IF NOT EXISTS carts_items(
     cart_item_id serial PRIMARY KEY,
     quantity integer,
-    cart_id integer UNIQUE,
+    cart_id integer,
     product_id integer,
+    UNIQUE (cart_id, product_id),
     CONSTRAINT cart_id FOREIGN KEY (cart_id)
         REFERENCES carts (cart_id) MATCH SIMPLE,
     CONSTRAINT product_id FOREIGN KEY (product_id)
