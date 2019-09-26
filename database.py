@@ -131,6 +131,23 @@ class Database():
                                                              product_id=product_id,
                                                              cart_id=cart_id))
 
+    async def get_cart_items(self, cart_id):
+        cart_items = list()
+        join = sa.join(carts_items, products, carts_items.c.product_id == products.c.product_id)
+        query = sa.select([carts_items, products.c.name]).select_from(join).where(carts_items.c.cart_id == cart_id)
+
+        async for row in self._conn.execute(query):
+            item = dict()
+            for col in row:
+                item[col] = row[col]
+            cart_items.append(item)
+
+        return cart_items
+    
+    async def delete_item_from_cart(self, cart_id, product_id):
+        await self._conn.execute(carts_items.delete().where((carts_items.c.cart_id == cart_id) &
+                                                            (carts_items.c.product_id == product_id)))
+
 
 
 if __name__ == "__main__":
@@ -140,4 +157,4 @@ if __name__ == "__main__":
                         host="localhost",
                         password="vegetables")
 
-    print(loop.run_until_complete( database.get_cart_item_id(1, 1) ))
+    print(loop.run_until_complete( database.get_cart_items(1) ))

@@ -51,8 +51,6 @@ async def add_item_to_cart(request):
     product_id = request_data["product_id"]
     quantity = int(request_data["quantity"])
 
-    print(cart_id, product_id, quantity)
-
     cart_item_id = await database.get_cart_item_id(cart_id=cart_id,
                                                    product_id=product_id)
 
@@ -65,6 +63,22 @@ async def add_item_to_cart(request):
                                                product_id=product_id,
                                                quantity=quantity)
         return web.Response(text="success")
+
+
+@routes.post('/get_cart_items')
+async def get_cart_items(request):
+    cart_id = await request.json()
+    cart_items = await database.get_cart_items(cart_id["cart_id"])
+    return web.json_response(cart_items)
+
+
+@routes.post('/delete_item_from_cart')
+async def delete_item_from_cart(request):
+    request_data = await request.json()
+    cart_id = request_data["cart_id"]
+    product_id = request_data["product_id"]
+    await database.delete_item_from_cart(cart_id, product_id)
+    return web.Response(text="success")
 
 
 
