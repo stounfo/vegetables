@@ -1,4 +1,3 @@
-
 CREATE TABLE IF NOT EXISTS categories(
     category_id serial PRIMARY KEY,
     name text UNIQUE
@@ -54,12 +53,14 @@ CREATE TABLE IF NOT EXISTS carts(
     cart_id serial PRIMARY KEY,
     user_id integer UNIQUE,
     tms_create timestamp without time zone,
+    status text,
     CONSTRAINT user_id FOREIGN KEY (user_id)
         REFERENCES users (user_id) MATCH SIMPLE
 );
 
 CREATE INDEX IF NOT EXISTS idx_cart_id ON carts (cart_id);
 CREATE INDEX IF NOT EXISTS idx_user_id_carts ON carts (user_id);
+CREATE INDEX IF NOT EXISTS idx_status_carts ON carts (status);
 
 
 CREATE TABLE IF NOT EXISTS carts_items(
@@ -85,8 +86,11 @@ CREATE TABLE IF NOT EXISTS orders(
     user_id integer,
     order_time text,
     order_products JSONB,
+    cart_id integer UNIQUE,
     CONSTRAINT user_id FOREIGN KEY (user_id)
-        REFERENCES users (user_id) MATCH SIMPLE
+        REFERENCES users (user_id) MATCH SIMPLE,
+    CONSTRAINT cart_id FOREIGN KEY (cart_id)
+        REFERENCES carts (cart_id) MATCH SIMPLE
 );
 
 CREATE INDEX IF NOT EXISTS idx_order_id ON orders (order_id);

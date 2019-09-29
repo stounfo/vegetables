@@ -33,7 +33,8 @@ users = sa.Table("users", sa.MetaData(),
 carts = sa.Table("carts", sa.MetaData(),
                     sa.Column("cart_id", sa.Integer, primary_key=True),
                     sa.Column("user_id", sa.Integer),
-                    sa.Column("tms_create", sa.DateTime))
+                    sa.Column("tms_create", sa.DateTime),
+                    sa.Column("status", sa.String),)
 
 
 carts_items = sa.Table("carts_items", sa.MetaData(),
@@ -48,4 +49,5 @@ orders = sa.Table("orders", sa.MetaData(),
                     sa.Column("tms_create", sa.DateTime),
                     sa.Column("user_id", sa.Integer),
                     sa.Column("order_time", sa.String),
-                    sa.Column("order_products", JSONB))
+                    sa.Column("order_products", JSONB),
+                    sa.Column("cart_id", sa.Integer))
