@@ -1,4 +1,5 @@
 import sqlalchemy as sa
+from sqlalchemy.dialects.postgresql import JSONB
 
 categories = sa.Table("categories", sa.MetaData(),
                     sa.Column("category_id", sa.Integer, primary_key=True),
@@ -40,3 +41,11 @@ carts_items = sa.Table("carts_items", sa.MetaData(),
                     sa.Column("quantity", sa.Integer),
                     sa.Column("cart_id", sa.Integer),
                     sa.Column("product_id", sa.Integer))
+        
+
+orders = sa.Table("orders", sa.MetaData(),
+                    sa.Column("order_id", sa.Integer, primary_key=True),
+                    sa.Column("tms_create", sa.DateTime),
+                    sa.Column("user_id", sa.Integer),
+                    sa.Column("order_time", sa.String),
+                    sa.Column("order_products", JSONB))

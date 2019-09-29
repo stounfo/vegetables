@@ -77,3 +77,17 @@ CREATE TABLE IF NOT EXISTS carts_items(
 CREATE INDEX IF NOT EXISTS idx_cart_item_id ON carts_items (cart_item_id);
 CREATE INDEX IF NOT EXISTS idx_cart_id_carts_items ON carts_items (cart_id);
 CREATE INDEX IF NOT EXISTS idx_product_id_carts_items ON carts_items (product_id);
+
+
+CREATE TABLE IF NOT EXISTS orders(
+    order_id serial PRIMARY KEY,
+    tms_create timestamp without time zone,
+    user_id integer,
+    order_time text,
+    order_products JSONB,
+    CONSTRAINT user_id FOREIGN KEY (user_id)
+        REFERENCES users (user_id) MATCH SIMPLE
+);
+
+CREATE INDEX IF NOT EXISTS idx_order_id ON orders (order_id);
+CREATE INDEX IF NOT EXISTS idx_user_id_orders ON orders (user_id);
