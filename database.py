@@ -3,7 +3,7 @@ import asyncio
 import sqlalchemy as sa
 from aiopg.sa import create_engine
 
-from orm_tables import (carts, carts_items, categories, products,
+from orm_tables import (carts, carts_items, categories, orders, products,
                         subcategories, users)
 from utils import datetime_now
 
@@ -74,8 +74,10 @@ class Database():
         return user_id
 
     async def get_cart_id(self, user_id):
+        # TODO rename get_cart_id to get_cart_id_from_carts
         cart_id = None
-        query = sa.select([carts.c.cart_id]).where(carts.c.user_id == user_id)
+        query = sa.select([carts.c.cart_id]).where((carts.c.user_id == user_id) &
+                                                   (carts.c.status == "cart"))
 
         async for row in self._conn.execute(query):
             cart_id = row.cart_id
@@ -100,6 +102,7 @@ class Database():
     async def insert_into_carts(self, user_id):
         result = await self._conn.execute(carts.insert().values(
                 user_id = user_id,
+                status = "cart",
                 tms_create=datetime_now(),
         ))
 
@@ -166,6 +169,28 @@ class Database():
                         (users.c.client_type == client_type))
 
         await self._conn.execute(query)
+    
+    async def get_user_id_from_carts(self, cart_id):
+        user_id = None
+        query = sa.select([carts.c.user_id]).where((carts.c.cart_id == cart_id) &
+                                                   (carts.c.status == "cart"))
+
+        async for row in self._conn.execute(query):
+            user_id = row.user_id
+        
+        return user_id
+    
+    async def insert_into_order(self, user_id, order_time, order_products, cart_id):
+        result = await self._conn.execute(orders.insert().values(
+                tms_create=datetime_now(),
+                user_id=user_id,
+                order_time=order_time,
+                order_products=order_products,
+                cart_id=cart_id))
+    
+    async def change_cart_status(self, cart_id: int, status: str):
+        query = carts.update().values(status=status).where(carts.c.cart_id == cart_id)
+        await self._conn.execute(query)
 
 
 
@@ -176,4 +201,4 @@ if __name__ == "__main__":
                         host="localhost",
                         password="vegetables")
 
-    print(loop.run_until_complete( database.get_cart_items(1) ))
+    print(loop.run_until_complete( database.change_cart_status(cart_id=1, status="cart") ))

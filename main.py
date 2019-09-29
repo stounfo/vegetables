@@ -111,7 +111,23 @@ async def add_user_info(request):
 @routes.post('/add_order')
 async def add_order(request):
     request_data = await request.json()
-    print(request_data)
+    cart_id = request_data["cart_id"]
+    order_time = request_data["order_time"]
+
+    user_id = await database.get_user_id_from_carts(cart_id)
+    order_products = await database.get_cart_items(cart_id)
+
+    order_products = [{"product_id": item["product_id"], 
+                       "name": item["name"],
+                       "quantity": item["quantity"]} for item in order_products]
+    await database.insert_into_order(user_id=user_id, 
+                                     order_time=order_time,
+                                     order_products=order_products,
+                                     cart_id=cart_id)
+
+    await database.change_cart_status(cart_id=cart_id, status="order")
+    await database.insert_into_carts(user_id)
+
     return web.Response(text="success")
 
 
@@ -120,7 +136,7 @@ if __name__ == "__main__":
     # Add conn to db
     database = Database(user="vegetables",
                         database="vegetables",
-                        host="localhost",
+                        host="vegetables-pg",
                         password="vegetables")
     app = web.Application()
     app.add_routes(routes)
