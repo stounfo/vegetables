@@ -152,6 +152,7 @@ class Database():
                                                             (carts_items.c.product_id == product_id)))
 
     async def select_user(self, user_code, client_type):
+        # TODO select all users col
         user_info = dict()
         query = sa.select([users.c.name, users.c.phone, users.c.address]).where((users.c.user_code == user_code) &
                                          (users.c.client_type == client_type))
@@ -192,6 +193,19 @@ class Database():
     async def change_cart_status(self, cart_id: int, status: str):
         query = carts.update().values(status=status).where(carts.c.cart_id == cart_id)
         await self._conn.execute(query)
+
+    async def select_user_orders(self, user_id, status):
+        user_orders = list()
+        query = sa.select([orders]).where((orders.c.user_id == user_id) &
+                                          (orders.c.status == status))
+
+        async for row in self._conn.execute(query):
+            order = dict()
+            for col in row:
+                order[col] = row[col]
+            user_orders.append(order)
+
+        return user_orders
 
 
 

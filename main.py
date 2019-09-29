@@ -110,6 +110,7 @@ async def add_user_info(request):
 
 @routes.post('/add_order')
 async def add_order(request):
+    # TODO add address to order table
     request_data = await request.json()
     cart_id = request_data["cart_id"]
     order_time = request_data["order_time"]
@@ -130,6 +131,20 @@ async def add_order(request):
 
     return web.Response(text="success")
 
+
+@routes.post('/get_orders')
+async def get_orders(request):
+    request_data = await request.json()
+    user_code = str(request_data["user_code"])
+    client_type = request_data["client_type"]
+    user_id = await database.get_user_id(user_code, client_type)
+
+    user_orders = [{"order_id": order["order_id"],
+                    "cart_id": order["cart_id"],
+                    "tms_create": str(order["tms_create"]),
+                    "order_time": order["order_time"]}
+                    for order in await database.select_user_orders(user_id, "active")]
+    return web.json_response(user_orders)
 
 
 if __name__ == "__main__":
