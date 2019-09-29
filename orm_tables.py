@@ -50,4 +50,5 @@ orders = sa.Table("orders", sa.MetaData(),
                     sa.Column("user_id", sa.Integer),
                     sa.Column("order_time", sa.String),
                     sa.Column("order_products", JSONB),
-                    sa.Column("cart_id", sa.Integer))
+                    sa.Column("cart_id", sa.Integer),
+                    sa.Column("status", sa.String))

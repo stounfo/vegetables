@@ -186,7 +186,8 @@ class Database():
                 user_id=user_id,
                 order_time=order_time,
                 order_products=order_products,
-                cart_id=cart_id))
+                cart_id=cart_id,
+                status="active"))
     
     async def change_cart_status(self, cart_id: int, status: str):
         query = carts.update().values(status=status).where(carts.c.cart_id == cart_id)
