@@ -1,3 +1,7 @@
+CREATE TYPE IF NOT EXISTS cart_status AS ENUM ('cart', 'order');
+CREATE TYPE IF NOT EXISTS order_status AS ENUM ('active', 'inactive');
+
+
 CREATE TABLE IF NOT EXISTS categories(
     category_id serial PRIMARY KEY,
     name text UNIQUE
@@ -51,9 +55,9 @@ CREATE INDEX IF NOT EXISTS idx_client_type_users ON users (client_type);
 
 CREATE TABLE IF NOT EXISTS carts(
     cart_id serial PRIMARY KEY,
-    user_id integer UNIQUE,
+    user_id integer,
     tms_create timestamp without time zone,
-    status text,
+    status cart_status,
     CONSTRAINT user_id FOREIGN KEY (user_id)
         REFERENCES users (user_id) MATCH SIMPLE
 );
@@ -87,6 +91,7 @@ CREATE TABLE IF NOT EXISTS orders(
     order_time text,
     order_products JSONB,
     cart_id integer UNIQUE,
+    status order_status,
     CONSTRAINT user_id FOREIGN KEY (user_id)
         REFERENCES users (user_id) MATCH SIMPLE,
     CONSTRAINT cart_id FOREIGN KEY (cart_id)
