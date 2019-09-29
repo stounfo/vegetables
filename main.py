@@ -81,12 +81,21 @@ async def delete_item_from_cart(request):
     return web.Response(text="success")
 
 
+@routes.post('/get_user_info')
+async def get_user_info(request):
+    request_data = await request.json()
+    user_code = str(request_data["user_code"])
+    client_type = request_data["client_type"]
+    user_info = await database.select_users(user_code, client_type)
+    return web.json_response(user_info)
+
+
 
 if __name__ == "__main__":
     # Add conn to db
     database = Database(user="vegetables",
                         database="vegetables",
-                        host="localhost",
+                        host="vegetables-pg",
                         password="vegetables")
     app = web.Application()
     app.add_routes(routes)

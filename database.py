@@ -148,6 +148,17 @@ class Database():
         await self._conn.execute(carts_items.delete().where((carts_items.c.cart_id == cart_id) &
                                                             (carts_items.c.product_id == product_id)))
 
+    async def select_users(self, user_code, client_type):
+        user_info = dict()
+        query = sa.select([users.c.name, users.c.phone, users.c.address]).where((users.c.user_code == user_code) &
+                                         (users.c.client_type == client_type))
+
+        async for row in self._conn.execute(query):
+            for col in row:
+                user_info[col] = row[col]
+
+        return user_info
+
 
 
 if __name__ == "__main__":
