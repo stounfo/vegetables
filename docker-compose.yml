@@ -23,3 +23,11 @@ services:
       - 8080:8080
     depends_on:
       - vegetables-pg
+  adminer:
+    container_name: adminer
+    image: adminer:4.7.3
+    ports:
+      - 16234:8080
+    depends_on:
+      - vegetables
+
