@@ -1,5 +1,5 @@
-CREATE TYPE IF NOT EXISTS cart_status AS ENUM ('cart', 'order');
-CREATE TYPE IF NOT EXISTS order_status AS ENUM ('active', 'inactive');
+CREATE TYPE cart_status AS ENUM ('cart', 'order');
+CREATE TYPE order_status AS ENUM ('active', 'inactive');
 
 
 CREATE TABLE IF NOT EXISTS categories(
