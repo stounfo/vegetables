@@ -86,8 +86,33 @@ async def get_user_info(request):
     request_data = await request.json()
     user_code = str(request_data["user_code"])
     client_type = request_data["client_type"]
-    user_info = await database.select_users(user_code, client_type)
+    user_info = await database.select_user(user_code, client_type)
     return web.json_response(user_info)
+
+
+@routes.post('/add_user_info')
+async def add_user_info(request):
+    request_data = await request.json()
+    user_code = str(request_data["user_code"])
+    client_type = request_data["client_type"]
+    name = request_data["name"]
+    phone = request_data["phone"]
+    address = request_data["address"]
+
+    # TODO Add phone, name, address processing
+    await database.update_user_info(user_code=user_code,
+                                    client_type=client_type,
+                                    name=name,
+                                    phone=phone,
+                                    address=address)
+    return web.Response(text="success")
+
+
+@routes.post('/add_order')
+async def add_order(request):
+    request_data = await request.json()
+    print(request_data)
+    return web.Response(text="success")
 
 
 
@@ -95,7 +120,7 @@ if __name__ == "__main__":
     # Add conn to db
     database = Database(user="vegetables",
                         database="vegetables",
-                        host="vegetables-pg",
+                        host="localhost",
                         password="vegetables")
     app = web.Application()
     app.add_routes(routes)
