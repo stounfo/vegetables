@@ -1,5 +1,5 @@
 CREATE TYPE cart_status AS ENUM ('cart', 'order');
-CREATE TYPE order_status AS ENUM ('active', 'inactive');
+CREATE TYPE order_status AS ENUM ('active', 'canceled', 'processing', 'delivering', 'delivered');
 
 
 CREATE TABLE IF NOT EXISTS categories(
@@ -90,8 +90,12 @@ CREATE TABLE IF NOT EXISTS orders(
     tms_create timestamp without time zone,
     user_id integer,
     order_time text,
+    phone text,
+    address text,
     order_products JSONB,
     cart_id integer UNIQUE,
+    review integer,
+    code text,
     status order_status,
     CONSTRAINT user_id FOREIGN KEY (user_id)
         REFERENCES users (user_id) MATCH SIMPLE,
