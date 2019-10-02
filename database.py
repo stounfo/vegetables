@@ -1,4 +1,5 @@
 import asyncio
+import random
 from typing import Union
 
 import sqlalchemy as sa
@@ -171,23 +172,16 @@ class Database():
 
         await self._conn.execute(query)
     
-    async def get_user_id_from_carts(self, cart_id):
-        user_id = None
-        query = sa.select([carts.c.user_id]).where((carts.c.cart_id == cart_id) &
-                                                   (carts.c.status == "cart"))
-
-        async for row in self._conn.execute(query):
-            user_id = row.user_id
-        
-        return user_id
-    
-    async def insert_into_order(self, user_id, order_time, order_products, cart_id):
+    async def insert_into_order(self, user_id, order_time, phone, address, order_products, cart_id):
         result = await self._conn.execute(orders.insert().values(
                 tms_create=datetime_now(),
                 user_id=user_id,
                 order_time=order_time,
+                phone=phone,
+                address=address,
                 order_products=order_products,
                 cart_id=cart_id,
+                code=str(random.randrange(100000, 999999)),
                 status="active"))
     
     async def change_cart_status(self, cart_id: int, status: str):
