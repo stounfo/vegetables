@@ -160,7 +160,7 @@ if __name__ == "__main__":
     # Add conn to db
     database = Database(user="vegetables",
                         database="vegetables",
-                        host="localhost",
+                        host="vegetables-pg",
                         password="vegetables")
     app = web.Application()
     app.add_routes(routes)
