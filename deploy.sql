@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS products(
     cost integer,
     subcategory_id integer,
     photo text,
+    description text,
     CONSTRAINT subcategory_id FOREIGN KEY (subcategory_id)
         REFERENCES subcategories (subcategory_id) MATCH SIMPLE
 

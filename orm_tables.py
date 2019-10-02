@@ -17,6 +17,7 @@ products = sa.Table("products", sa.MetaData(),
                     sa.Column("name", sa.String),
                     sa.Column("cost", sa.Integer),
                     sa.Column("subcategory_id", sa.Integer),
+                    sa.Column("description", sa.String),
                     sa.Column("photo", sa.String))
 
 
