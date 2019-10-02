@@ -8,22 +8,31 @@ routes = web.RouteTableDef()
 
 @routes.get('/get_categories')
 async def get_categories(request):
-    categories = await database.select_categories()
-    return web.json_response(categories)
+    try:
+        categories = await database.select_categories()
+        return web.json_response({"result": "ok", "message": categories})
+    except Exception as e:
+        return web.json_response({"result": "error", "message": e})
 
 
 @routes.post('/get_subcategories')
 async def get_subcategories(request):
-    category_id = await request.json()
-    subcategories = await database.select_subcategories(category_id["category_id"])
-    return web.json_response(subcategories)
+    try:
+        category_id = await request.json()
+        subcategories = await database.select_subcategories(category_id["category_id"])
+        return web.json_response({"result": "ok", "message": subcategories})
+    except Exception as e:
+        return {"result": "error", "message": e}
 
 
 @routes.post('/get_products')
 async def get_products(request):
-    subcategory_id = await request.json()    
-    products = await database.select_products(subcategory_id["subcategory_id"])
-    return web.json_response(products)
+    try:
+        subcategory_id = await request.json()    
+        products = await database.select_products(subcategory_id["subcategory_id"])
+        return web.json_response({"result": "ok", "message": products})
+    except Exception as e:
+        return web.json_response({"result": "error", "message": e})
 
 
 @routes.post('/get_cart_id')
@@ -151,7 +160,7 @@ if __name__ == "__main__":
     # Add conn to db
     database = Database(user="vegetables",
                         database="vegetables",
-                        host="vegetables-pg",
+                        host="localhost",
                         password="vegetables")
     app = web.Application()
     app.add_routes(routes)
