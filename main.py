@@ -5,6 +5,20 @@ import json
 
 routes = web.RouteTableDef()
 
+@routes.post('/add_user')
+async def add_user(request):
+    request_data = await request.json()
+    user_code = str(request_data["user_code"])
+    client_type = request_data["client_type"]
+
+    user_id = await database.user_exists(user_code, client_type)
+    if user_id:
+        return web.json_response({"result": "error"})
+    else:
+        user_id = await database.insert_into_users(user_code, client_type)
+        await database.insert_into_carts(user_id)
+        return web.json_response({"result": "success"})
+
 
 @routes.get('/get_categories')
 async def get_categories(request):
@@ -33,21 +47,6 @@ async def get_products(request):
         return web.json_response({"result": "ok", "message": products})
     except Exception as e:
         return web.json_response({"result": "error", "message": e})
-
-
-@routes.post('/add_user')
-async def add_user(request):
-    request_data = await request.json()
-    user_code = str(request_data["user_code"])
-    client_type = request_data["client_type"]
-
-    user_id = await database.user_exists(user_code, client_type)
-    if user_id:
-        return web.json_response({"result": "error"})
-    else:
-        user_id = await database.insert_into_users(user_code, client_type)
-        await database.insert_into_carts(user_id)
-        return web.json_response({"result": "success"})
 
 
 @routes.post('/add_item_to_cart')
@@ -89,10 +88,14 @@ async def get_cart_items(request):
 @routes.post('/delete_item_from_cart')
 async def delete_item_from_cart(request):
     request_data = await request.json()
-    cart_id = request_data["cart_id"]
     product_id = request_data["product_id"]
+    user_code = str(request_data["user_code"])
+    client_type = request_data["client_type"]
+
+    user_id = await database.user_exists(user_code, client_type)
+    cart_id = await database.get_cart_id(user_id)
     await database.delete_item_from_cart(cart_id, product_id)
-    return web.Response(text="success")
+    return web.json_response({"result": "success"})
 
 
 @routes.post('/get_user_info')
