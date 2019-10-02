@@ -48,7 +48,7 @@ async def add_item_to_cart(request):
     client_type = request_data["client_type"]
     product_id = request_data["product_id"]
     quantity = int(request_data["quantity"])
-    
+
     cart_id = await database.user_exists(user_code, client_type)
     cart_item_id = await database.get_cart_item_id(cart_id=cart_id,
                                                    product_id=product_id)
@@ -56,12 +56,12 @@ async def add_item_to_cart(request):
     if cart_item_id:
         await database.update_cart_item(cart_item_id=cart_item_id,
                                         quantity=quantity)
-        return web.Response(text="success")
+        return web.json_response({"result": "success"})
     else:
         await database.insert_into_carts_items(cart_id=cart_id,
                                                product_id=product_id,
                                                quantity=quantity)
-        return web.Response(text="success")
+        return web.json_response({"result": "success"})
 
 
 @routes.post('/get_cart_items')
