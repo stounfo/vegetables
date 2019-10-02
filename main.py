@@ -49,7 +49,8 @@ async def add_item_to_cart(request):
     product_id = request_data["product_id"]
     quantity = int(request_data["quantity"])
 
-    cart_id = await database.user_exists(user_code, client_type)
+    user_id = await database.user_exists(user_code, client_type)
+    cart_id = await database.get_cart_id(user_id)
     cart_item_id = await database.get_cart_item_id(cart_id=cart_id,
                                                    product_id=product_id)
 
@@ -66,8 +67,13 @@ async def add_item_to_cart(request):
 
 @routes.post('/get_cart_items')
 async def get_cart_items(request):
-    cart_id = await request.json()
-    cart_items = await database.get_cart_items(cart_id["cart_id"])
+    request_data = await request.json()
+    user_code = str(request_data["user_code"])
+    client_type = request_data["client_type"]
+
+    user_id = await database.user_exists(user_code, client_type)
+    cart_id = await database.get_cart_id(user_id)
+    cart_items = await database.get_cart_items(cart_id)
     return web.json_response(cart_items)
 
 

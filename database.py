@@ -74,6 +74,15 @@ class Database():
         
         return user_id
 
+    async def get_cart_id(self, user_id):
+         cart_id = None
+         query = sa.select([carts.c.cart_id]).where((carts.c.user_id == user_id) &
+                                                    (carts.c.status == "cart"))
+
+         async for row in self._conn.execute(query):
+             cart_id = row.cart_id
+
+         return cart_id
 
     async def insert_into_users(self, user_code, client_type):
         result = await self._conn.execute(users.insert().values(
