@@ -1,4 +1,5 @@
 import asyncio
+from typing import Union
 
 import sqlalchemy as sa
 from aiopg.sa import create_engine
@@ -25,7 +26,7 @@ class Database():
         )
         return await engine.acquire()
 
-    async def select_categories(self):
+    async def select_categories(self) -> list:
         list_of_categories = list()
         query = sa.select([categories])
 
@@ -37,7 +38,7 @@ class Database():
             
         return list_of_categories
 
-    async def select_subcategories(self, category_id):
+    async def select_subcategories(self, category_id: int) -> list:
         list_of_subcategories = list()
         query = sa.select([subcategories]).where(subcategories.c.category_id == category_id)
 
@@ -49,7 +50,7 @@ class Database():
 
         return list_of_subcategories
 
-    async def select_products(self, subcategory_id):
+    async def select_products(self, subcategory_id: int) -> list:
         list_of_products = list()
         query = sa.select([products]).where(products.c.subcategory_id == subcategory_id)
 
@@ -61,7 +62,7 @@ class Database():
 
         return list_of_products
 
-    async def get_user_id(self, user_code, client_type):
+    async def user_exists(self, user_code: str, client_type: str) -> Union[int, bool]:
         user_id = False
         query = sa.select([users.c.user_id]).where(
                             (users.c.user_code == user_code) &
