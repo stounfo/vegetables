@@ -1,7 +1,7 @@
-from aiohttp import web
 import aiohttp_cors
+from aiohttp import web
+
 from database import Database
-import json
 
 routes = web.RouteTableDef()
 
@@ -118,13 +118,24 @@ async def add_user_info(request):
 
 @routes.post('/add_order')
 async def add_order(request):
-    # TODO add address to order table
+    # TODO Add phone, name, address processing
     request_data = await request.json()
-    cart_id = request_data["cart_id"]
+    user_code = str(request_data["user_code"])
+    client_type = request_data["client_type"]
+    name = request_data["name"]
+    phone = request_data["phone"]
+    address = request_data["address"]
     order_time = request_data["order_time"]
 
-    user_id = await database.get_user_id_from_carts(cart_id)
+    user_id = await database.user_exists(user_code, client_type)
+    cart_id = await database.get_cart_id(user_id)
     order_products = await database.get_cart_items(cart_id)
+
+    await database.update_user_info(user_code=user_code,
+                                    client_type=client_type,
+                                    name=name,
+                                    phone=phone,
+                                    address=address)
 
     order_products = [{"product_id": item["product_id"], 
                        "name": item["name"],
@@ -132,7 +143,9 @@ async def add_order(request):
     await database.insert_into_order(user_id=user_id, 
                                      order_time=order_time,
                                      order_products=order_products,
-                                     cart_id=cart_id)
+                                     cart_id=cart_id,
+                                     phone=phone,
+                                     address=address)
 
     await database.change_cart_status(cart_id=cart_id, status="order")
     await database.insert_into_carts(user_id)
