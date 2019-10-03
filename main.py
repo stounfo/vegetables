@@ -160,11 +160,11 @@ async def get_orders(request):
     client_type = request_data["client_type"]
     user_id = await database.user_exists(user_code, client_type)
 
-    user_orders = [{"order_id": order["order_id"],
-                    "cart_id": order["cart_id"],
-                    "tms_create": str(order["tms_create"]),
-                    "order_time": order["order_time"]}
-                    for order in await database.select_user_orders(user_id, "active")]
+    user_orders = await database.select_user_orders(user_id, "active")
+    for item in user_orders:
+        for key in item:
+            if key == "tms_create":
+                item[key] = str(item[key])
     return web.json_response(user_orders)
 
 
