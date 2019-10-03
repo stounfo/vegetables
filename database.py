@@ -136,6 +136,7 @@ class Database():
                                                              cart_id=cart_id))
 
     async def get_cart_items(self, cart_id):
+        # TODO rename to select
         cart_items = list()
         join = sa.join(carts_items, products, carts_items.c.product_id == products.c.product_id)
         query = sa.select([carts_items, products.c.name]).select_from(join).where(carts_items.c.cart_id == cart_id)
