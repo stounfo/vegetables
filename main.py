@@ -177,6 +177,15 @@ async def get_orders(request):
     return web.json_response(user_orders)
 
 
+@routes.post('/get_order_items')
+async def get_order_items(request):
+    request_data = await request.json()
+    order_id = request_data["order_id"]
+
+    order_items = await database.get_cart_items(order_id)
+    return web.json_response(order_items)
+
+
 if __name__ == "__main__":
     # Add conn to db
     database = Database(user="vegetables",
