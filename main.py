@@ -3,6 +3,8 @@ from aiohttp import web
 
 from database import Database
 
+
+
 routes = web.RouteTableDef()
 
 @routes.post('/add_user')
@@ -22,31 +24,22 @@ async def add_user(request):
 
 @routes.get('/get_categories')
 async def get_categories(request):
-    try:
-        categories = await database.select_categories()
-        return web.json_response({"result": "ok", "message": categories})
-    except Exception as e:
-        return web.json_response({"result": "error", "message": e})
+    categories = await database.select_categories()
+    return web.json_response(categories)
 
 
 @routes.post('/get_subcategories')
 async def get_subcategories(request):
-    try:
-        category_id = await request.json()
-        subcategories = await database.select_subcategories(category_id["category_id"])
-        return web.json_response({"result": "ok", "message": subcategories})
-    except Exception as e:
-        return {"result": "error", "message": e}
+    category_id = await request.json()
+    subcategories = await database.select_subcategories(category_id["category_id"])
+    return web.json_response(subcategories)
 
 
 @routes.post('/get_products')
 async def get_products(request):
-    try:
-        subcategory_id = await request.json()    
-        products = await database.select_products(subcategory_id["subcategory_id"])
-        return web.json_response({"result": "ok", "message": products})
-    except Exception as e:
-        return web.json_response({"result": "error", "message": e})
+    subcategory_id = await request.json()    
+    products = await database.select_products(subcategory_id["subcategory_id"])
+    return web.json_response(products)
 
 
 @routes.post('/add_item_to_cart')
@@ -122,7 +115,7 @@ async def add_user_info(request):
                                     name=name,
                                     phone=phone,
                                     address=address)
-    return web.Response(text="success")
+    return web.json_response({"result": "success"})
 
 
 @routes.post('/add_order')
@@ -159,7 +152,7 @@ async def add_order(request):
     await database.change_cart_status(cart_id=cart_id, status="order")
     await database.insert_into_carts(user_id)
 
-    return web.Response(text="success")
+    return web.json_response({"result": "success"})
 
 
 @routes.post('/get_orders')
