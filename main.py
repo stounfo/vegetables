@@ -121,6 +121,7 @@ async def add_user_info(request):
 @routes.post('/add_order')
 async def add_order(request):
     # TODO Add phone, name, address processing
+    # TODO Add check for empty cart
     request_data = await request.json()
     user_code = str(request_data["user_code"])
     client_type = request_data["client_type"]
